@@ -1,4 +1,6 @@
 theme_nifti = function(){
+  require(ggplot2)
+  
   theme(axis.line=element_blank(),
         axis.text.x=element_blank(),
         axis.text.y=element_blank(),
