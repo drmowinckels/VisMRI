@@ -1,0 +1,12 @@
+</pre><hr>Higher-level stats<br><pre>
+
+cat ../design.lcon | awk '{ print  }' > design.lcon
+
+/projects/psifmri/software/fMRI/fsl/bin/fslsplit mask tmpmask -z
+
+/projects/psifmri/software/fMRI/fsl/bin/fslsplit filtered_func_data tmpcope -z
+
+/projects/psifmri/software/fMRI/fsl/bin/fslsplit var_filtered_func_data tmpvarcope -z
+
+/projects/psifmri/software/fMRI/fsl/bin/fslsplit tdof_filtered_func_data tmptdof -z
+/projects/psifmri/software/fMRI/fsl/bin/flameo --cope=tmpcope0000 --vc=tmpvarcope0000 --dvc=tmptdof0000 --mask=tmpmask0000 --ld=stats0000 --dm=design.mat --cs=design.grp --tc=design.con  --io --runmode=flame12 --nj=10000 --bi=500 --se=1 --fm --zlt=2.25 --zut=2.65
