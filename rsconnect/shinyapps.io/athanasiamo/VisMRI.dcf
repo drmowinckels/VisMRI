@@ -1,0 +1,13 @@
+name: VisMRI
+title: VisMRI
+username:
+account: athanasiamo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 258779
+bundleId: 1185240
+url: https://athanasiamo.shinyapps.io/VisMRI/
+when: 1516523382.35782
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Renvrion|.Rprofile|README.rmd|VisMRI.R|data

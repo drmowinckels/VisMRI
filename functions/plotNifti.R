@@ -1,4 +1,4 @@
-plotNifti = function(Dat, view="coronal", slice=45, threshMin=0,threshMax){
+plotNifti = function(Dat, view="sagittal", slice=45, threshMin=0,threshMax){
   require(tidyverse); require(plotly); 
   source("functions/theme_nifti.R")
   
@@ -9,8 +9,7 @@ plotNifti = function(Dat, view="coronal", slice=45, threshMin=0,threshMax){
   left = switch(view, "coronal"="L", "sagittal"="A", "axial"="L")
   right = switch(view, "coronal"="R", "sagittal"="P", "axial"="R")
   
-  tmp = eval(parse(text=paste0("Dat %>% filter(",Z," %in% ",slice,") %>% rename(BG=Val)")))
-  
+  tmp  = Dat %>% rename(BG=Val)
   # If there is another column, assume it's an overlay
   idx = which(!((tmp) %>% names %in% c("X", "Y", "Z","BG")))
   if(!is_empty(idx)){
@@ -18,10 +17,11 @@ plotNifti = function(Dat, view="coronal", slice=45, threshMin=0,threshMax){
     RANGE = cbind(Min = tmp[,5] %>% min(), Max =  tmp[,5] %>% max()) %>% as.data.frame()
     RANGE = c(RANGE$Min, RANGE$Min/2, 0, RANGE$Max/2, RANGE$Max) %>% round(1)
     
-    
     if(!missing(threshMin)) tmp[,idx] = ifelse(abs(tmp[,idx])>=threshMin, tmp[,idx], NaN)
     if(!missing(threshMax)) tmp[,idx] = ifelse(abs(tmp[,idx])<=threshMax, tmp[,idx], NaN)
   }
+  
+  tmp = eval(parse(text=paste0("tmp %>% filter(",Z," %in% ",slice,")")))
   
   #P = eval(parse(text=paste0("ggplot(tmp, aes(x=",X,",y=",Y,",frame=",Z,"))")))
   P = eval(parse(text=paste0("ggplot(tmp, aes(x=",X,",y=",Y,"))")))
