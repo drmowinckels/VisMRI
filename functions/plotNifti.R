@@ -1,4 +1,4 @@
-plotNifti = function(Dat, view="sagittal", slice=45, threshMin=0,threshMax){
+plotNifti = function(Dat, view="sagittal", slice=45, threshMin=0,threshMax, show.legend=T ){
   require(tidyverse); require(plotly); 
   source("functions/theme_nifti.R")
   
@@ -14,17 +14,19 @@ plotNifti = function(Dat, view="sagittal", slice=45, threshMin=0,threshMax){
   idx = which(!((tmp) %>% names %in% c("X", "Y", "Z","BG")))
   if(!is_empty(idx)){
     
-    RANGE = cbind(Min = tmp[,5] %>% min(), Max =  tmp[,5] %>% max()) %>% as.data.frame()
+    RANGE = cbind(Min = tmp[,idx] %>% min(), Max =  tmp[,idx] %>% max()) %>% as.data.frame()
     RANGE = c(RANGE$Min, RANGE$Min/2, 0, RANGE$Max/2, RANGE$Max) %>% round(1)
     
-    if(!missing(threshMin)) tmp[,idx] = ifelse(abs(tmp[,idx])>=threshMin, tmp[,idx], NaN)
+    tmp[,idx] = ifelse(abs(tmp[,idx])>=threshMin, tmp[,idx], NaN)
     if(!missing(threshMax)) tmp[,idx] = ifelse(abs(tmp[,idx])<=threshMax, tmp[,idx], NaN)
   }
   
-  tmp = eval(parse(text=paste0("tmp %>% filter(",Z," %in% ",slice,")")))
+  tmp = eval(parse(text=paste0("tmp %>% filter(",Z," %in% ",slice,") "))) %>% 
+    mutate(Key=view)  
   
   #P = eval(parse(text=paste0("ggplot(tmp, aes(x=",X,",y=",Y,",frame=",Z,"))")))
-  P = eval(parse(text=paste0("ggplot(tmp, aes(x=",X,",y=",Y,"))")))
+  P = eval(parse(text=paste0("ggplot(tmp, aes(x=",X,",y=",Y,",z=",Z,",key=Key))")))
+  #P = eval(parse(text=paste0("ggplot(tmp, aes(x=",X,",y=",Y,",z=",Z,"))")))
   
   P = P + 
     geom_raster(aes(fill=BG), interpolate = T, show.legend = F) + 
@@ -34,7 +36,7 @@ plotNifti = function(Dat, view="sagittal", slice=45, threshMin=0,threshMax){
   if(!is_empty(idx)){
     
     tmp2 = tmp %>% na.omit()
-    overlay = paste0("P + geom_point(data=tmp2,aes(col=",names(tmp2)[idx],"), alpha=.7)")
+    overlay = paste0("P + geom_point(data=tmp2,aes(col=",names(tmp2)[idx],"), alpha=.7, show.legend = show.legend)")
     P = eval(parse(text=overlay)) +
       scale_color_gradientn(colours = c("darkblue","lightblue","white","darkred","yellow"),
                             na.value = "transparent",
@@ -48,5 +50,22 @@ plotNifti = function(Dat, view="sagittal", slice=45, threshMin=0,threshMax){
     annotate("text",x=(tmp %>% select_(X) %>% min()+6), y=(tmp %>% select_(Y) %>% max()-3), 
              label=paste(Z,"=",slice), col="white") 
   
-  ggplotly(P)
+  MRI = ggplotly(P)
+  
+  
+  ### Ugly hacks to fix coordinate system difficulties on hover in plotting a 3D object with fixed coordinates
+  MRI$x$data[[2]]$text = MRI$x$data[[2]]$text %>% 
+    gsub("X:","Q:",.) %>% gsub("Y:","W:",.) %>% gsub("Z:","T:",.) %>% 
+    gsub("Q:",paste0(X,":"),.) %>% gsub("W:",paste0(Y,":"),.) %>% gsub("T:",paste0(Z,":"),.)
+  
+  if(!is_empty(idx)){
+    
+    MRI$x$data[[2]]$text = MRI$x$data[[2]]$text %>% 
+      gsub("X:","Q:",.) %>% gsub("Y:","W:",.) %>% gsub("Z:","T:",.) %>% 
+      gsub("Q:",paste0(X,":"),.) %>% gsub("W:",paste0(Y,":"),.) %>% gsub("T:",paste0(Z,":"),.)
+  }
+  
+  MRI$elementId = view
+    
+  return(MRI)
 }

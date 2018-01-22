@@ -17,5 +17,8 @@ IMG = left_join(BG, Cope3, by = c("X", "Y", "Z"))
 # Try some plotting!
 plotNifti(BG, view="axial")
 plotNifti(Cope3, view="sagittal")
-plotNifti(Dat=IMG, view="sagittal", threshMin=2)
-plotNifti(Dat=IMG, view="axial", slice=30,threshMin=2.5)
+P = plotNifti(Dat=IMG, view="sagittal", threshMin=2)
+x = plotNifti(Dat=IMG, view="axial", slice=30,threshMin=2.5)
+G = plotNifti(Dat=IMG, view="coronal", slice=30,threshMin=2.5)
+
+G

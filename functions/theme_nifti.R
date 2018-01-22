@@ -11,5 +11,6 @@ theme_nifti = function(){
         panel.border=element_blank(),
         panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),
-        plot.background= element_blank())
+        plot.background= element_blank()
+        )
 }
