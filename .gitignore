@@ -32,3 +32,11 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .Rproj.user
+
+# data subfolders
+data/Fix_94_FL12DW_291115_NoDiff/
+test/
+
+# Specific R files
+3Dtest.R 
+VisMRI.R  

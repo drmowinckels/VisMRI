@@ -3,12 +3,15 @@ rm(list=ls())
 
 sapply(list.files("functions",pattern=".R", full.names = T), source)
 
+py <- plot_ly(username="Athanasiamo", key="wy77nSuYC4DS7yF12Qhs")
+
+
 #Read in background image and convert
-BG = readNIfTI("data/Fix_94_FL12DW_291115_NoDiff/bg_image.nii.gz") %>% 
+BG = readNIfTI("data/bg_image.nii.gz") %>% 
   nifti2df()
 
 #Read in overlay (stats) 
-Cope3 = readNIfTI("data/Fix_94_FL12DW_291115_NoDiff/cope3.feat/stats/zstat5.nii.gz") %>% 
+Cope3 = readNIfTI("data/zstat5.nii.gz") %>% 
   nifti2df() %>% rename(Cope3=Val)
 
 # Add overlay to the df for plotting (will only work with one overlay)
@@ -20,5 +23,11 @@ plotNifti(Cope3, view="sagittal")
 P = plotNifti(Dat=IMG, view="sagittal", threshMin=2)
 x = plotNifti(Dat=IMG, view="axial", slice=30,threshMin=2.5)
 G = plotNifti(Dat=IMG, view="coronal", slice=30,threshMin=2.5)
+G = plotNifti(Dat=IMG, view="sagittal", slice=30,threshMin=2.5, 
+              crossHair = c(44,15),
+              peak.highlight=T)
 
-G
+ggplotly(G)
+
+
+
