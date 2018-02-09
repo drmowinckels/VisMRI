@@ -40,3 +40,4 @@ test/
 # Specific R files
 3Dtest.R 
 VisMRI.R  
+stackOver.R
